@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Precios Smartphone y PC</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #121826;
+      --card-2: #172033;
+      --text: #eef4ff;
+      --muted: #9fb0c7;
+      --accent: #ff8a00;
+      --accent-2: #ffd166;
+      --danger: #ff4d4d;
+      --ok: #2ecc71;
+      --border: #26344f;
+      --input: #0e1524;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at top, #1b2740 0, var(--bg) 45%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #111827, #1f2937);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.3);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      letter-spacing: .3px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 800px) {
+      .grid {
+        grid-template-columns: 370px 1fr;
+      }
+    }
+
+    .card {
+      background: rgba(18, 24, 38, .96);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.22);
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--input);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255, 138, 0, .16);
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .percent-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .percent-box input {
+      min-width: 0;
+    }
+
+    .percent-box button {
+      white-space: nowrap;
+      padding-left: 12px;
+      padding-right: 12px;
+      width: auto;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 15px;
+      color: #0b0f17;
+      background: var(--accent);
+      width: 100%;
+    }
+
+    button:active {
+      transform: scale(.99);
+    }
+
+    .btn-secondary {
+      background: #26344f;
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-ok {
+      background: var(--ok);
+      color: #06120b;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .searchbar {
+      margin-bottom: 12px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      background: #1b263d;
+      color: var(--text);
+      padding: 11px;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #111827;
+    }
+
+    .item {
+      background: var(--card-2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .model {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .type {
+      font-size: 12px;
+      color: #111827;
+      background: var(--accent-2);
+      padding: 5px 9px;
+      border-radius: 99px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .prices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pricebox {
+      background: #0e1524;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .pricebox span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .pricebox strong {
+      font-size: 18px;
+    }
+
+    .profit {
+      color: var(--ok);
+    }
+
+    .warning {
+      color: var(--accent-2);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .item-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px 10px;
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+      line-height: 1.35;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      padding: 20px 0 6px;
+    }
+  </style>
+
+  <meta name="theme-color" content="#0b0f17" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Precios" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>📱💻 Precios Smartphone y PC</h1>
+      <div class="subtitle">
+        Controla precio de compra, precio de venta y ganancia. En PC solo se usa precio final.
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2 id="formTitle">Agregar modelo</h2>
+
+        <input type="hidden" id="editId" />
+
+        <div class="field">
+          <label for="tipo">Tipo</label>
+          <select id="tipo" onchange="toggleFields()">
+            <option value="smartphone">Smartphone</option>
+            <option value="pc">PC</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="modelo">Modelo</label>
+          <input id="modelo" placeholder="Ej: Samsung A15 / HP EliteBook" />
+        </div>
+
+        <div class="field" id="campoCompra">
+          <label for="precioCompra">Precio que me sale a mí</label>
+          <input id="precioCompra" type="number" step="0.01" placeholder="Ej: 120" />
+        </div>
+
+        <div class="field">
+          <label for="precioVenta" id="labelVenta">Precio al que vendo</label>
+          <input id="precioVenta" type="number" step="0.01" placeholder="Ej: 140" />
+
+          <div class="percent-box" id="campoPorcentaje">
+            <input id="porcentajeGanancia" type="number" step="0.01" placeholder="% ganancia. Ej: 15" />
+            <button class="btn-secondary" type="button" onclick="calculateByPercent()">Calcular %</button>
+          </div>
+        </div>
+
+        <button onclick="saveItem()">Guardar modelo</button>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="clearForm()">Limpiar</button>
+          <button class="btn-secondary" onclick="exportData()">Exportar JSON</button>
+        </div>
+
+        <div class="actions">
+          <button class="btn-ok" onclick="document.getElementById('importFile').click()">Importar JSON</button>
+          <button class="btn-danger" onclick="clearAll()">Borrar todo</button>
+        </div>
+
+        <input class="hidden" type="file" id="importFile" accept=".json" onchange="importData(event)" />
+      </section>
+
+      <section class="card">
+        <div class="searchbar">
+          <input id="search" placeholder="Buscar modelo..." oninput="renderItems()" />
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" id="tabAll" onclick="setFilter('all')">Todo</button>
+          <button class="tab" id="tabPhone" onclick="setFilter('smartphone')">Smartphones</button>
+          <button class="tab" id="tabPc" onclick="setFilter('pc')">PC</button>
+        </div>
+
+        <div id="list"></div>
+      </section>
+    </div>
+
+    <footer>
+      Guardado local en este navegador. Haz respaldo con “Exportar JSON”.
+    </footer>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "precios_smartphone_pc_v1";
+    let items = [];
+    let currentFilter = "all";
+
+    function money(value) {
+      const n = Number(value || 0);
+      return "$" + n.toFixed(2);
+    }
+
+    function loadItems() {
+      try {
+        items = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      } catch {
+        items = [];
+      }
+      renderItems();
+    }
+
+    function persist() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function toggleFields() {
+      const tipo = document.getElementById("tipo").value;
+      const campoCompra = document.getElementById("campoCompra");
+      const campoPorcentaje = document.getElementById("campoPorcentaje");
+      const labelVenta = document.getElementById("labelVenta");
+
+      if (tipo === "pc") {
+        campoCompra.classList.add("hidden");
+        campoPorcentaje.classList.add("hidden");
+        labelVenta.textContent = "Precio final de venta PC";
+        document.getElementById("precioCompra").value = "";
+        document.getElementById("porcentajeGanancia").value = "";
+      } else {
+        campoCompra.classList.remove("hidden");
+        campoPorcentaje.classList.remove("hidden");
+        labelVenta.textContent = "Precio al que vendo";
+      }
+    }
+
+    function calculateByPercent() {
+      const tipo = document.getElementById("tipo").value;
+      const compra = Number(document.getElementById("precioCompra").value);
+      const porcentaje = Number(document.getElementById("porcentajeGanancia").value);
+
+      if (tipo !== "smartphone") {
+        alert("El cálculo por porcentaje solo aplica para smartphones.");
+        return;
+      }
+
+      if (compra <= 0) {
+        alert("Primero pon el precio que te sale a ti.");
+        return;
+      }
+
+      if (porcentaje <= 0) {
+        alert("Escribe el porcentaje de ganancia. Ejemplo: 15");
+        return;
+      }
+
+      const precioVenta = compra + (compra * porcentaje / 100);
+      document.getElementById("precioVenta").value = precioVenta.toFixed(2);
+    }
+
+    function saveItem() {
+      const editId = document.getElementById("editId").value;
+      const tipo = document.getElementById("tipo").value;
+      const modelo = document.getElementById("modelo").value.trim();
+      const precioCompra = Number(document.getElementById("precioCompra").value || 0);
+      const precioVenta = Number(document.getElementById("precioVenta").value || 0);
+
+      if (!modelo) {
+        alert("Escribe el modelo.");
+        return;
+      }
+
+      if (tipo === "smartphone" && precioCompra <= 0) {
+        alert("En smartphone debes poner el precio que te sale a ti.");
+        return;
+      }
+
+      if (precioVenta <= 0) {
+        alert(tipo === "pc" ? "Pon el precio final de la PC." : "Pon el precio de venta.");
+        return;
+      }
+
+      const data = {
+        id: editId || crypto.randomUUID(),
+        tipo,
+        modelo,
+        precioCompra: tipo === "smartphone" ? precioCompra : null,
+        precioVenta,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (editId) {
+        items = items.map(item => item.id === editId ? data : item);
+      } else {
+        items.unshift(data);
+      }
+
+      persist();
+      clearForm();
+      renderItems();
+    }
+
+    function clearForm() {
+      document.getElementById("editId").value = "";
+      document.getElementById("formTitle").textContent = "Agregar modelo";
+      document.getElementById("tipo").value = "smartphone";
+      document.getElementById("modelo").value = "";
+      document.getElementById("precioCompra").value = "";
+      document.getElementById("precioVenta").value = "";
+      document.getElementById("porcentajeGanancia").value = "";
+      toggleFields();
+    }
+
+    function editItem(id) {
+      const item = items.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById("editId").value = item.id;
+      document.getElementById("formTitle").textContent = "Editar modelo";
+      document.getElementById("tipo").value = item.tipo;
+      document.getElementById("modelo").value = item.modelo;
+      document.getElementById("precioCompra").value = item.precioCompra ?? "";
+      document.getElementById("precioVenta").value = item.precioVenta ?? "";
+      document.getElementById("porcentajeGanancia").value = "";
+      toggleFields();
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function deleteItem(id) {
+      const item = items.find(x => x.id === id);
+      if (!item) return;
+
+      if (confirm("¿Borrar " + item.modelo + "?")) {
+        items = items.filter(x => x.id !== id);
+        persist();
+        renderItems();
+      }
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+
+      document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
+      if (filter === "all") document.getElementById("tabAll").classList.add("active");
+      if (filter === "smartphone") document.getElementById("tabPhone").classList.add("active");
+      if (filter === "pc") document.getElementById("tabPc").classList.add("active");
+
+      renderItems();
+    }
+
+    function renderItems() {
+      const list = document.getElementById("list");
+      const q = document.getElementById("search").value.toLowerCase().trim();
+
+      let filtered = items.filter(item => {
+        const matchFilter = currentFilter === "all" || item.tipo === currentFilter;
+        const matchSearch = item.modelo.toLowerCase().includes(q);
+        return matchFilter && matchSearch;
+      });
+
+      if (!filtered.length) {
+        list.innerHTML = `<div class="empty">No hay modelos para mostrar.</div>`;
+        return;
+      }
+
+      list.innerHTML = filtered.map(item => {
+        const isPhone = item.tipo === "smartphone";
+        const profit = isPhone ? Number(item.precioVenta || 0) - Number(item.precioCompra || 0) : null;
+        const warning = isPhone && (profit < 15 || profit > 20)
+          ? `<div class="warning">⚠️ Ganancia fuera del rango sugerido de $15 a $20.</div>`
+          : "";
+
+        return `
+          <div class="item">
+            <div class="item-head">
+              <div class="model">${escapeHtml(item.modelo)}</div>
+              <div class="type">${isPhone ? "SMARTPHONE" : "PC"}</div>
+            </div>
+
+            <div class="prices">
+              ${isPhone ? `
+                <div class="pricebox">
+                  <span>Me sale a mí</span>
+                  <strong>${money(item.precioCompra)}</strong>
+                </div>
+                <div class="pricebox">
+                  <span>Vendo en</span>
+                  <strong>${money(item.precioVenta)}</strong>
+                </div>
+                <div class="pricebox">
+                  <span>Ganancia</span>
+                  <strong class="profit">${money(profit)}</strong>
+                </div>
+                <div class="pricebox">
+                  <span>Margen</span>
+                  <strong>${item.precioCompra > 0 ? ((profit / item.precioCompra) * 100).toFixed(1) + "%" : "0%"}</strong>
+                </div>
+              ` : `
+                <div class="pricebox">
+                  <span>Precio final PC</span>
+                  <strong>${money(item.precioVenta)}</strong>
+                </div>
+                <div class="pricebox">
+                  <span>Compra</span>
+                  <strong>No aplica</strong>
+                </div>
+              `}
+            </div>
+
+            ${warning}
+
+            <div class="item-actions">
+              <button class="btn-secondary" onclick="editItem('${item.id}')">Editar</button>
+              <button class="btn-danger" onclick="deleteItem('${item.id}')">Borrar</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function exportData() {
+      const backup = {
+        app: "Precios Smartphone y PC",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        items
+      };
+
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "respaldo-precios-smartphone-pc.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          const importedItems = Array.isArray(data) ? data : data.items;
+
+          if (!Array.isArray(importedItems)) {
+            throw new Error("Formato inválido.");
+          }
+
+          items = importedItems.map(item => ({
+            id: item.id || crypto.randomUUID(),
+            tipo: item.tipo === "pc" ? "pc" : "smartphone",
+            modelo: String(item.modelo || "").trim(),
+            precioCompra: item.tipo === "pc" ? null : Number(item.precioCompra || 0),
+            precioVenta: Number(item.precioVenta || 0),
+            updatedAt: item.updatedAt || new Date().toISOString()
+          })).filter(item => item.modelo && item.precioVenta > 0);
+
+          persist();
+          renderItems();
+          alert("Importación completada.");
+        } catch (err) {
+          alert("No se pudo importar el archivo. Motivo: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    function clearAll() {
+      if (confirm("¿Seguro que quieres borrar todos los modelos?")) {
+        items = [];
+        persist();
+        renderItems();
+      }
+    }
+
+    loadItems();
+    toggleFields();
+  </script>
+</body>
+</html>
