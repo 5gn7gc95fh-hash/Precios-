@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Precios Smartphone y PC</title>
+  <title>Precios Smartphone, Tablet y PC</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -209,7 +209,7 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
       gap: 8px;
       margin-bottom: 12px;
     }
@@ -361,9 +361,9 @@
 <body>
   <div class="app">
     <header>
-      <h1>📱💻 Precios Smartphone y PC</h1>
+      <h1>📱💻 Precios Smartphone, Tablet y PC</h1>
       <div class="subtitle">
-        Controla RAM, memoria, detalles, precio de compra, precio de venta y ganancia. En PC solo se usa precio final.
+        Controla RAM, memoria, detalles, precio de compra, precio de venta y ganancia. En PC y tablets solo se usa precio final.
       </div>
     </header>
 
@@ -377,13 +377,14 @@
           <label for="tipo">Tipo</label>
           <select id="tipo" onchange="toggleFields()">
             <option value="smartphone">Smartphone</option>
+            <option value="tablet">Tablet</option>
             <option value="pc">PC</option>
           </select>
         </div>
 
         <div class="field">
           <label for="modelo">Modelo</label>
-          <input id="modelo" placeholder="Ej: Samsung A15 / HP EliteBook" />
+          <input id="modelo" placeholder="Ej: Samsung A15 / iPad / HP EliteBook" />
         </div>
 
         <div class="row">
@@ -462,6 +463,7 @@
         <div class="tabs">
           <button class="tab active" id="tabAll" onclick="setFilter('all')">Todo</button>
           <button class="tab" id="tabPhone" onclick="setFilter('smartphone')">Smartphones</button>
+          <button class="tab" id="tabTablet" onclick="setFilter('tablet')">Tablets</button>
           <button class="tab" id="tabPc" onclick="setFilter('pc')">PC</button>
         </div>
 
@@ -503,10 +505,10 @@
       const campoPorcentaje = document.getElementById("campoPorcentaje");
       const labelVenta = document.getElementById("labelVenta");
 
-      if (tipo === "pc") {
+      if (tipo === "pc" || tipo === "tablet") {
         campoCompra.classList.add("hidden");
         campoPorcentaje.classList.add("hidden");
-        labelVenta.textContent = "Precio final de venta PC";
+        labelVenta.textContent = tipo === "pc" ? "Precio final de venta PC" : "Precio final de venta Tablet";
         document.getElementById("precioCompra").value = "";
         document.getElementById("porcentajeGanancia").value = "";
       } else {
@@ -561,7 +563,7 @@
       }
 
       if (precioVenta <= 0) {
-        alert(tipo === "pc" ? "Pon el precio final de la PC." : "Pon el precio de venta.");
+        alert(tipo === "pc" ? "Pon el precio final de la PC." : tipo === "tablet" ? "Pon el precio final de la Tablet." : "Pon el precio de venta.");
         return;
       }
 
@@ -638,6 +640,7 @@
       document.querySelectorAll(".tab").forEach(btn => btn.classList.remove("active"));
       if (filter === "all") document.getElementById("tabAll").classList.add("active");
       if (filter === "smartphone") document.getElementById("tabPhone").classList.add("active");
+      if (filter === "tablet") document.getElementById("tabTablet").classList.add("active");
       if (filter === "pc") document.getElementById("tabPc").classList.add("active");
 
       renderItems();
@@ -661,6 +664,8 @@
 
       list.innerHTML = filtered.map(item => {
         const isPhone = item.tipo === "smartphone";
+        const isTablet = item.tipo === "tablet";
+        const typeLabel = isPhone ? "SMARTPHONE" : isTablet ? "TABLET" : "PC";
         const profit = isPhone ? Number(item.precioVenta || 0) - Number(item.precioCompra || 0) : null;
         const warning = isPhone && (profit < 15 || profit > 20)
           ? `<div class="warning">⚠️ Ganancia fuera del rango sugerido de $15 a $20.</div>`
@@ -676,7 +681,7 @@
                   ${item.memoria ? `<div class="spec"><span>Memoria:</span> ${escapeHtml(item.memoria)}</div>` : ""}
                 </div>
               </div>
-              <div class="type">${isPhone ? "SMARTPHONE" : "PC"}</div>
+              <div class="type">${typeLabel}</div>
             </div>
 
             ${item.detalles ? `<div class="details"><span>Detalles:</span>${escapeHtml(item.detalles)}</div>` : ""}
@@ -701,7 +706,7 @@
                 </div>
               ` : `
                 <div class="pricebox">
-                  <span>Precio final PC</span>
+                  <span>${isTablet ? "Precio final Tablet" : "Precio final PC"}</span>
                   <strong>${money(item.precioVenta)}</strong>
                 </div>
                 <div class="pricebox">
@@ -733,7 +738,7 @@
 
     function exportData() {
       const backup = {
-        app: "Precios Smartphone y PC",
+        app: "Precios Smartphone, Tablet y PC",
         version: 1,
         exportedAt: new Date().toISOString(),
         items
@@ -764,12 +769,12 @@
 
           items = importedItems.map(item => ({
             id: item.id || crypto.randomUUID(),
-            tipo: item.tipo === "pc" ? "pc" : "smartphone",
+            tipo: item.tipo === "pc" ? "pc" : item.tipo === "tablet" ? "tablet" : "smartphone",
             modelo: String(item.modelo || "").trim(),
             ram: String(item.ram || "").trim(),
             memoria: String(item.memoria || "").trim(),
             detalles: String(item.detalles || "").trim(),
-            precioCompra: item.tipo === "pc" ? null : Number(item.precioCompra || 0),
+            precioCompra: item.tipo === "smartphone" ? Number(item.precioCompra || 0) : null,
             precioVenta: Number(item.precioVenta || 0),
             updatedAt: item.updatedAt || new Date().toISOString()
           })).filter(item => item.modelo && item.precioVenta > 0);
