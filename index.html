@@ -504,7 +504,7 @@
 
       <section class="card">
         <div class="searchbar">
-          <input id="search" placeholder="Buscar modelo..." oninput="renderItems()" />
+          <input id="search" placeholder="Buscar por modelo, marca, RAM o memoria..." oninput="renderItems()" />
         </div>
 
         <div class="tabs">
@@ -717,10 +717,16 @@
         return;
       }
 
+      let lastBrand = "";
+
       list.innerHTML = filtered.map(item => {
         const isPhone = item.tipo === "smartphone";
         const isTablet = item.tipo === "tablet";
         const typeLabel = isPhone ? "SMARTPHONE" : isTablet ? "TABLET" : "PC";
+        const brandName = item.marca || "Sin marca";
+        const showBrandTitle = brandName !== lastBrand;
+        lastBrand = brandName;
+
         const hasPhonePrices = isPhone && item.precioCompra !== null && item.precioCompra !== undefined && item.precioVenta !== null && item.precioVenta !== undefined;
         const profit = hasPhonePrices ? Number(item.precioVenta) - Number(item.precioCompra) : null;
         const warning = hasPhonePrices && (profit < 15 || profit > 20)
@@ -728,10 +734,10 @@
           : "";
 
         return `
+          ${showBrandTitle ? `<div class="brand-group-title">${escapeHtml(brandName)}</div>` : ""}
           <div class="item">
             <div class="item-head">
               <div>
-                <div class="brand">${escapeHtml(item.marca || "Sin marca")}</div>
                 <div class="model">${escapeHtml(item.modelo)}</div>
                 <div class="specs">
                   ${item.ram ? `<div class="spec"><span>RAM:</span> ${escapeHtml(item.ram)}</div>` : ""}
