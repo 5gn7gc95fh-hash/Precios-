@@ -253,6 +253,15 @@
       line-height: 1.2;
     }
 
+    .brand {
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      margin-bottom: 2px;
+    }
+
     .type {
       font-size: 11px;
       color: #7c3d00;
@@ -375,7 +384,7 @@
     <header>
       <h1>📱💻 Precios Smartphone, Tablet y PC</h1>
       <div class="subtitle">
-        RAM, memoria, detalles y precios. En PC y tablets solo precio final.
+        Marca, RAM, memoria, detalles y precios. Ordenado por marca.
       </div>
     </header>
 
@@ -395,8 +404,34 @@
         </div>
 
         <div class="field">
+          <label for="marca">Marca</label>
+          <select id="marca">
+            <option value="">Escoger marca</option>
+            <option value="Apple">Apple</option>
+            <option value="Samsung">Samsung</option>
+            <option value="Xiaomi">Xiaomi</option>
+            <option value="POCO">POCO</option>
+            <option value="Redmi">Redmi</option>
+            <option value="Infinix">Infinix</option>
+            <option value="TECNO">TECNO</option>
+            <option value="Honor">Honor</option>
+            <option value="Huawei">Huawei</option>
+            <option value="Motorola">Motorola</option>
+            <option value="OPPO">OPPO</option>
+            <option value="Vivo">Vivo</option>
+            <option value="Realme">Realme</option>
+            <option value="Lenovo">Lenovo</option>
+            <option value="HP">HP</option>
+            <option value="Dell">Dell</option>
+            <option value="Asus">Asus</option>
+            <option value="Acer">Acer</option>
+            <option value="Otra">Otra</option>
+          </select>
+        </div>
+
+        <div class="field">
           <label for="modelo">Modelo</label>
-          <input id="modelo" placeholder="Ej: Samsung A15 / iPad / HP EliteBook" />
+          <input id="modelo" placeholder="Ej: A15 / iPad 9 / EliteBook" />
         </div>
 
         <div class="row">
@@ -559,6 +594,7 @@
     function saveItem() {
       const editId = document.getElementById("editId").value;
       const tipo = document.getElementById("tipo").value;
+      const marca = document.getElementById("marca").value.trim();
       const modelo = document.getElementById("modelo").value.trim();
       const ram = document.getElementById("ram").value.trim();
       const memoria = document.getElementById("memoria").value.trim();
@@ -576,6 +612,7 @@
       const data = {
         id: editId || crypto.randomUUID(),
         tipo,
+        marca,
         modelo,
         ram,
         memoria,
@@ -600,6 +637,7 @@
       document.getElementById("editId").value = "";
       document.getElementById("formTitle").textContent = "Agregar modelo";
       document.getElementById("tipo").value = "smartphone";
+      document.getElementById("marca").value = "";
       document.getElementById("modelo").value = "";
       document.getElementById("ram").value = "";
       document.getElementById("memoria").value = "";
@@ -617,6 +655,7 @@
       document.getElementById("editId").value = item.id;
       document.getElementById("formTitle").textContent = "Editar modelo";
       document.getElementById("tipo").value = item.tipo;
+      document.getElementById("marca").value = item.marca || "";
       document.getElementById("modelo").value = item.modelo;
       document.getElementById("ram").value = item.ram || "";
       document.getElementById("memoria").value = item.memoria || "";
@@ -658,9 +697,19 @@
 
       let filtered = items.filter(item => {
         const matchFilter = currentFilter === "all" || item.tipo === currentFilter;
-        const searchable = `${item.modelo || ""} ${item.ram || ""} ${item.memoria || ""} ${item.detalles || ""}`.toLowerCase();
+        const searchable = `${item.marca || ""} ${item.modelo || ""} ${item.ram || ""} ${item.memoria || ""} ${item.detalles || ""}`.toLowerCase();
         const matchSearch = searchable.includes(q);
         return matchFilter && matchSearch;
+      });
+
+      filtered.sort((a, b) => {
+        const marcaA = (a.marca || "Sin marca").toLowerCase();
+        const marcaB = (b.marca || "Sin marca").toLowerCase();
+        const modeloA = (a.modelo || "").toLowerCase();
+        const modeloB = (b.modelo || "").toLowerCase();
+
+        if (marcaA !== marcaB) return marcaA.localeCompare(marcaB);
+        return modeloA.localeCompare(modeloB);
       });
 
       if (!filtered.length) {
@@ -682,6 +731,7 @@
           <div class="item">
             <div class="item-head">
               <div>
+                <div class="brand">${escapeHtml(item.marca || "Sin marca")}</div>
                 <div class="model">${escapeHtml(item.modelo)}</div>
                 <div class="specs">
                   ${item.ram ? `<div class="spec"><span>RAM:</span> ${escapeHtml(item.ram)}</div>` : ""}
@@ -777,6 +827,7 @@
           items = importedItems.map(item => ({
             id: item.id || crypto.randomUUID(),
             tipo: item.tipo === "pc" ? "pc" : item.tipo === "tablet" ? "tablet" : "smartphone",
+            marca: String(item.marca || "").trim(),
             modelo: String(item.modelo || "").trim(),
             ram: String(item.ram || "").trim(),
             memoria: String(item.memoria || "").trim(),
