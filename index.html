@@ -438,12 +438,12 @@
 
         <div class="field" id="campoCompra">
           <label for="precioCompra">Me sale</label>
-          <input id="precioCompra" type="number" step="0.01" placeholder="Ej: 120" />
+          <input id="precioCompra" type="number" step="0.01" placeholder="Opcional. Ej: 120" />
         </div>
 
         <div class="field">
           <label for="precioVenta" id="labelVenta">Vendo en</label>
-          <input id="precioVenta" type="number" step="0.01" placeholder="Ej: 140" />
+          <input id="precioVenta" type="number" step="0.01" placeholder="Opcional. Ej: 140" />
 
           <div class="percent-box" id="campoPorcentaje">
             <input id="porcentajeGanancia" type="number" step="0.01" placeholder="% ganancia. Ej: 15" />
@@ -493,7 +493,9 @@
     let currentFilter = "all";
 
     function money(value) {
-      const n = Number(value || 0);
+      if (value === null || value === undefined || value === "") return "Pendiente";
+      const n = Number(value);
+      if (Number.isNaN(n)) return "Pendiente";
       return "$" + n.toFixed(2);
     }
 
@@ -539,8 +541,8 @@
         return;
       }
 
-      if (compra <= 0) {
-        alert("Primero pon el precio que te sale a ti.");
+      if (!compra || compra <= 0) {
+        alert("Para calcular %, primero pon el precio que te sale a ti.");
         return;
       }
 
@@ -560,21 +562,13 @@
       const ram = document.getElementById("ram").value.trim();
       const memoria = document.getElementById("memoria").value.trim();
       const detalles = document.getElementById("detalles").value.trim();
-      const precioCompra = Number(document.getElementById("precioCompra").value || 0);
-      const precioVenta = Number(document.getElementById("precioVenta").value || 0);
+      const precioCompraRaw = document.getElementById("precioCompra").value;
+      const precioVentaRaw = document.getElementById("precioVenta").value;
+      const precioCompra = precioCompraRaw === "" ? null : Number(precioCompraRaw);
+      const precioVenta = precioVentaRaw === "" ? null : Number(precioVentaRaw);
 
       if (!modelo) {
         alert("Escribe el modelo.");
-        return;
-      }
-
-      if (tipo === "smartphone" && precioCompra <= 0) {
-        alert("En smartphone debes poner el precio que te sale a ti.");
-        return;
-      }
-
-      if (precioVenta <= 0) {
-        alert(tipo === "pc" ? "Pon el precio final de la PC." : tipo === "tablet" ? "Pon el precio final de la Tablet." : "Pon el precio de venta.");
         return;
       }
 
@@ -677,8 +671,9 @@
         const isPhone = item.tipo === "smartphone";
         const isTablet = item.tipo === "tablet";
         const typeLabel = isPhone ? "SMARTPHONE" : isTablet ? "TABLET" : "PC";
-        const profit = isPhone ? Number(item.precioVenta || 0) - Number(item.precioCompra || 0) : null;
-        const warning = isPhone && (profit < 15 || profit > 20)
+        const hasPhonePrices = isPhone && item.precioCompra !== null && item.precioCompra !== undefined && item.precioVenta !== null && item.precioVenta !== undefined;
+        const profit = hasPhonePrices ? Number(item.precioVenta) - Number(item.precioCompra) : null;
+        const warning = hasPhonePrices && (profit < 15 || profit > 20)
           ? `<div class="warning">⚠️ Ganancia fuera del rango sugerido de $15 a $20.</div>`
           : "";
 
@@ -713,7 +708,7 @@
                 </div>
                 <div class="pricebox">
                   <span>Margen</span>
-                  <strong>${item.precioCompra > 0 ? ((profit / item.precioCompra) * 100).toFixed(1) + "%" : "0%"}</strong>
+                  <strong>${hasPhonePrices && item.precioCompra > 0 ? ((profit / item.precioCompra) * 100).toFixed(1) + "%" : "Pendiente"}</strong>
                 </div>
               ` : `
                 <div class="pricebox">
@@ -785,10 +780,10 @@
             ram: String(item.ram || "").trim(),
             memoria: String(item.memoria || "").trim(),
             detalles: String(item.detalles || "").trim(),
-            precioCompra: item.tipo === "smartphone" ? Number(item.precioCompra || 0) : null,
-            precioVenta: Number(item.precioVenta || 0),
+            precioCompra: item.tipo === "smartphone" && item.precioCompra !== null && item.precioCompra !== undefined && item.precioCompra !== "" ? Number(item.precioCompra) : null,
+            precioVenta: item.precioVenta !== null && item.precioVenta !== undefined && item.precioVenta !== "" ? Number(item.precioVenta) : null,
             updatedAt: item.updatedAt || new Date().toISOString()
-          })).filter(item => item.modelo && item.precioVenta > 0);
+          })).filter(item => item.modelo);
 
           persist();
           renderItems();
