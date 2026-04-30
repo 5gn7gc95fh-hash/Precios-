@@ -86,7 +86,7 @@
       font-weight: 600;
     }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       background: var(--input);
       color: var(--text);
@@ -97,13 +97,47 @@
       outline: none;
     }
 
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(255, 138, 0, .16);
     }
 
     .field {
       margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      background: var(--input);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 16px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .details {
+      margin-top: 10px;
+      background: #0e1524;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+
+    .details span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: 700;
     }
 
     .row {
@@ -329,7 +363,7 @@
     <header>
       <h1>📱💻 Precios Smartphone y PC</h1>
       <div class="subtitle">
-        Controla RAM, memoria, precio de compra, precio de venta y ganancia. En PC solo se usa precio final.
+        Controla RAM, memoria, detalles, precio de compra, precio de venta y ganancia. En PC solo se usa precio final.
       </div>
     </header>
 
@@ -383,6 +417,11 @@
               <option value="2TB">2TB</option>
             </select>
           </div>
+        </div>
+
+        <div class="field">
+          <label for="detalles">Detalles del equipo</label>
+          <textarea id="detalles" placeholder="Ej: Color azul, 90% batería, caja y cargador, pantalla buena, detalle en tapa..."></textarea>
         </div>
 
         <div class="field" id="campoCompra">
@@ -507,6 +546,7 @@
       const modelo = document.getElementById("modelo").value.trim();
       const ram = document.getElementById("ram").value.trim();
       const memoria = document.getElementById("memoria").value.trim();
+      const detalles = document.getElementById("detalles").value.trim();
       const precioCompra = Number(document.getElementById("precioCompra").value || 0);
       const precioVenta = Number(document.getElementById("precioVenta").value || 0);
 
@@ -531,6 +571,7 @@
         modelo,
         ram,
         memoria,
+        detalles,
         precioCompra: tipo === "smartphone" ? precioCompra : null,
         precioVenta,
         updatedAt: new Date().toISOString()
@@ -554,6 +595,7 @@
       document.getElementById("modelo").value = "";
       document.getElementById("ram").value = "";
       document.getElementById("memoria").value = "";
+      document.getElementById("detalles").value = "";
       document.getElementById("precioCompra").value = "";
       document.getElementById("precioVenta").value = "";
       document.getElementById("porcentajeGanancia").value = "";
@@ -570,6 +612,7 @@
       document.getElementById("modelo").value = item.modelo;
       document.getElementById("ram").value = item.ram || "";
       document.getElementById("memoria").value = item.memoria || "";
+      document.getElementById("detalles").value = item.detalles || "";
       document.getElementById("precioCompra").value = item.precioCompra ?? "";
       document.getElementById("precioVenta").value = item.precioVenta ?? "";
       document.getElementById("porcentajeGanancia").value = "";
@@ -606,7 +649,7 @@
 
       let filtered = items.filter(item => {
         const matchFilter = currentFilter === "all" || item.tipo === currentFilter;
-        const searchable = `${item.modelo || ""} ${item.ram || ""} ${item.memoria || ""}`.toLowerCase();
+        const searchable = `${item.modelo || ""} ${item.ram || ""} ${item.memoria || ""} ${item.detalles || ""}`.toLowerCase();
         const matchSearch = searchable.includes(q);
         return matchFilter && matchSearch;
       });
@@ -635,6 +678,8 @@
               </div>
               <div class="type">${isPhone ? "SMARTPHONE" : "PC"}</div>
             </div>
+
+            ${item.detalles ? `<div class="details"><span>Detalles:</span>${escapeHtml(item.detalles)}</div>` : ""}
 
             <div class="prices">
               ${isPhone ? `
@@ -723,6 +768,7 @@
             modelo: String(item.modelo || "").trim(),
             ram: String(item.ram || "").trim(),
             memoria: String(item.memoria || "").trim(),
+            detalles: String(item.detalles || "").trim(),
             precioCompra: item.tipo === "pc" ? null : Number(item.precioCompra || 0),
             precioVenta: Number(item.precioVenta || 0),
             updatedAt: item.updatedAt || new Date().toISOString()
