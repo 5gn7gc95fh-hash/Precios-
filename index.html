@@ -223,6 +223,28 @@
       white-space: nowrap;
     }
 
+    .specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .spec {
+      background: #0e1524;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .spec span {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
     .prices {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -307,7 +329,7 @@
     <header>
       <h1>📱💻 Precios Smartphone y PC</h1>
       <div class="subtitle">
-        Controla precio de compra, precio de venta y ganancia. En PC solo se usa precio final.
+        Controla RAM, memoria, precio de compra, precio de venta y ganancia. En PC solo se usa precio final.
       </div>
     </header>
 
@@ -328,6 +350,39 @@
         <div class="field">
           <label for="modelo">Modelo</label>
           <input id="modelo" placeholder="Ej: Samsung A15 / HP EliteBook" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="ram">RAM</label>
+            <select id="ram">
+              <option value="">Escoger RAM</option>
+              <option value="2GB">2GB</option>
+              <option value="3GB">3GB</option>
+              <option value="4GB">4GB</option>
+              <option value="6GB">6GB</option>
+              <option value="8GB">8GB</option>
+              <option value="12GB">12GB</option>
+              <option value="16GB">16GB</option>
+              <option value="24GB">24GB</option>
+              <option value="32GB">32GB</option>
+              <option value="64GB">64GB</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="memoria">Memoria / almacenamiento</label>
+            <select id="memoria">
+              <option value="">Escoger memoria</option>
+              <option value="32GB">32GB</option>
+              <option value="64GB">64GB</option>
+              <option value="128GB">128GB</option>
+              <option value="256GB">256GB</option>
+              <option value="512GB">512GB</option>
+              <option value="1TB">1TB</option>
+              <option value="2TB">2TB</option>
+            </select>
+          </div>
         </div>
 
         <div class="field" id="campoCompra">
@@ -450,6 +505,8 @@
       const editId = document.getElementById("editId").value;
       const tipo = document.getElementById("tipo").value;
       const modelo = document.getElementById("modelo").value.trim();
+      const ram = document.getElementById("ram").value.trim();
+      const memoria = document.getElementById("memoria").value.trim();
       const precioCompra = Number(document.getElementById("precioCompra").value || 0);
       const precioVenta = Number(document.getElementById("precioVenta").value || 0);
 
@@ -472,6 +529,8 @@
         id: editId || crypto.randomUUID(),
         tipo,
         modelo,
+        ram,
+        memoria,
         precioCompra: tipo === "smartphone" ? precioCompra : null,
         precioVenta,
         updatedAt: new Date().toISOString()
@@ -493,6 +552,8 @@
       document.getElementById("formTitle").textContent = "Agregar modelo";
       document.getElementById("tipo").value = "smartphone";
       document.getElementById("modelo").value = "";
+      document.getElementById("ram").value = "";
+      document.getElementById("memoria").value = "";
       document.getElementById("precioCompra").value = "";
       document.getElementById("precioVenta").value = "";
       document.getElementById("porcentajeGanancia").value = "";
@@ -507,6 +568,8 @@
       document.getElementById("formTitle").textContent = "Editar modelo";
       document.getElementById("tipo").value = item.tipo;
       document.getElementById("modelo").value = item.modelo;
+      document.getElementById("ram").value = item.ram || "";
+      document.getElementById("memoria").value = item.memoria || "";
       document.getElementById("precioCompra").value = item.precioCompra ?? "";
       document.getElementById("precioVenta").value = item.precioVenta ?? "";
       document.getElementById("porcentajeGanancia").value = "";
@@ -543,7 +606,8 @@
 
       let filtered = items.filter(item => {
         const matchFilter = currentFilter === "all" || item.tipo === currentFilter;
-        const matchSearch = item.modelo.toLowerCase().includes(q);
+        const searchable = `${item.modelo || ""} ${item.ram || ""} ${item.memoria || ""}`.toLowerCase();
+        const matchSearch = searchable.includes(q);
         return matchFilter && matchSearch;
       });
 
@@ -562,7 +626,13 @@
         return `
           <div class="item">
             <div class="item-head">
-              <div class="model">${escapeHtml(item.modelo)}</div>
+              <div>
+                <div class="model">${escapeHtml(item.modelo)}</div>
+                <div class="specs">
+                  ${item.ram ? `<div class="spec"><span>RAM:</span> ${escapeHtml(item.ram)}</div>` : ""}
+                  ${item.memoria ? `<div class="spec"><span>Memoria:</span> ${escapeHtml(item.memoria)}</div>` : ""}
+                </div>
+              </div>
               <div class="type">${isPhone ? "SMARTPHONE" : "PC"}</div>
             </div>
 
@@ -651,6 +721,8 @@
             id: item.id || crypto.randomUUID(),
             tipo: item.tipo === "pc" ? "pc" : "smartphone",
             modelo: String(item.modelo || "").trim(),
+            ram: String(item.ram || "").trim(),
+            memoria: String(item.memoria || "").trim(),
             precioCompra: item.tipo === "pc" ? null : Number(item.precioCompra || 0),
             precioVenta: Number(item.precioVenta || 0),
             updatedAt: item.updatedAt || new Date().toISOString()
