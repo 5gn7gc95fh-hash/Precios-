@@ -702,6 +702,11 @@
       const list = document.getElementById("list");
       const q = document.getElementById("search").value.toLowerCase().trim();
 
+      if (!q) {
+        list.innerHTML = `<div class="empty">Escribe un modelo, marca, RAM o memoria para buscar.</div>`;
+        return;
+      }
+
       let filtered = items.filter(item => {
         const matchFilter = currentFilter === "all" || item.tipo === currentFilter;
         const searchable = `${item.marca || ""} ${item.modelo || ""} ${item.ram || ""} ${item.memoria || ""} ${item.detalles || ""}`.toLowerCase();
@@ -720,7 +725,7 @@
       });
 
       if (!filtered.length) {
-        list.innerHTML = `<div class="empty">No hay modelos.</div>`;
+        list.innerHTML = `<div class="empty">No se encontraron modelos.</div>`;
         return;
       }
 
