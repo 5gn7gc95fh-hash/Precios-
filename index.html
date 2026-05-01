@@ -402,8 +402,8 @@
         <div class="field">
           <label for="tipo">Tipo</label>
           <select id="tipo" onchange="toggleFields()">
-            <option value="smartphone">Smartphone</option>
-            <option value="tablet">Tablet</option>
+            <option value="smartphone">SMARTPHONE</option>
+            <option value="tablet">TABLET</option>
             <option value="pc">PC</option>
           </select>
         </div>
@@ -411,41 +411,41 @@
         <div class="field">
           <label for="marca">Marca</label>
           <select id="marca">
-            <option value="">Escoger marca</option>
-            <option value="Apple">Apple</option>
-            <option value="Samsung">Samsung</option>
-            <option value="Xiaomi">Xiaomi</option>
+            <option value="">ESCOGER MARCA</option>
+            <option value="APPLE">APPLE</option>
+            <option value="SAMSUNG">SAMSUNG</option>
+            <option value="XIAOMI">XIAOMI</option>
             <option value="POCO">POCO</option>
-            <option value="Redmi">Redmi</option>
-            <option value="Infinix">Infinix</option>
+            <option value="REDMI">REDMI</option>
+            <option value="INFINIX">INFINIX</option>
             <option value="TECNO">TECNO</option>
-            <option value="Honor">Honor</option>
-            <option value="Huawei">Huawei</option>
-            <option value="Motorola">Motorola</option>
-            <option value="Nubia">Nubia</option>
+            <option value="HONOR">HONOR</option>
+            <option value="HUAWEI">HUAWEI</option>
+            <option value="MOTOROLA">MOTOROLA</option>
+            <option value="NUBIA">NUBIA</option>
             <option value="ZTE">ZTE</option>
             <option value="OPPO">OPPO</option>
-            <option value="Vivo">Vivo</option>
-            <option value="Realme">Realme</option>
-            <option value="Lenovo">Lenovo</option>
+            <option value="VIVO">VIVO</option>
+            <option value="REALME">REALME</option>
+            <option value="LENOVO">LENOVO</option>
             <option value="HP">HP</option>
-            <option value="Dell">Dell</option>
-            <option value="Asus">Asus</option>
-            <option value="Acer">Acer</option>
-            <option value="Otra">Otra</option>
+            <option value="DELL">DELL</option>
+            <option value="ASUS">ASUS</option>
+            <option value="ACER">ACER</option>
+            <option value="OTRA">OTRA</option>
           </select>
         </div>
 
         <div class="field">
           <label for="modelo">Modelo</label>
-          <input id="modelo" placeholder="Ej: A15 / iPad 9 / EliteBook" />
+          <input id="modelo" placeholder="EJ: A15 / IPAD 9 / ELITEBOOK" oninput="forceUppercaseInput(this)" />
         </div>
 
         <div class="row">
           <div class="field">
             <label for="ram">RAM</label>
             <select id="ram">
-              <option value="">Escoger RAM</option>
+              <option value="">ESCOGER RAM</option>
               <option value="2GB">2GB</option>
               <option value="3GB">3GB</option>
               <option value="4GB">4GB</option>
@@ -462,7 +462,7 @@
           <div class="field">
             <label for="memoria">Memoria</label>
             <select id="memoria">
-              <option value="">Escoger memoria</option>
+              <option value="">ESCOGER MEMORIA</option>
               <option value="32GB">32GB</option>
               <option value="64GB">64GB</option>
               <option value="128GB">128GB</option>
@@ -476,17 +476,17 @@
 
         <div class="field">
           <label for="detalles">Detalles</label>
-          <textarea id="detalles" placeholder="Color, estado, garantía, accesorios, detalles..."></textarea>
+          <textarea id="detalles" placeholder="COLOR, ESTADO, GARANTÍA, ACCESORIOS, DETALLES..." oninput="forceUppercaseInput(this)"></textarea>
         </div>
 
         <div class="field" id="campoCompra">
           <label for="precioCompra">Me sale</label>
-          <input id="precioCompra" type="number" step="0.01" placeholder="Opcional. Ej: 120" />
+          <input id="precioCompra" type="number" step="0.01" placeholder="OPCIONAL. EJ: 120" />
         </div>
 
         <div class="field">
           <label for="precioVenta" id="labelVenta">Vendo en</label>
-          <input id="precioVenta" type="number" step="0.01" placeholder="Opcional. Ej: 140" />
+          <input id="precioVenta" type="number" step="0.01" placeholder="OPCIONAL. EJ: 140" />
 
           <div class="percent-box" id="campoPorcentaje">
             <input id="porcentajeGanancia" type="number" step="0.01" placeholder="% ganancia. Ej: 15" />
@@ -511,7 +511,7 @@
 
       <section class="card">
         <div class="searchbar">
-          <input id="search" placeholder="Buscar por modelo, marca, RAM o memoria..." oninput="renderItems()" />
+          <input id="search" placeholder="BUSCAR POR MODELO, MARCA, RAM O MEMORIA..." oninput="forceUppercaseInput(this); renderItems()" />
         </div>
 
         <div class="tabs">
@@ -534,6 +534,16 @@
     const STORAGE_KEY = "precios_smartphone_pc_v1";
     let items = [];
     let currentFilter = "all";
+
+
+    function forceUppercaseInput(element) {
+      const start = element.selectionStart;
+      const end = element.selectionEnd;
+      element.value = element.value.toUpperCase();
+      try {
+        element.setSelectionRange(start, end);
+      } catch (e) {}
+    }
 
     function money(value) {
       if (value === null || value === undefined || value === "") return "Pendiente";
@@ -601,11 +611,11 @@
     function saveItem() {
       const editId = document.getElementById("editId").value;
       const tipo = document.getElementById("tipo").value;
-      const marca = document.getElementById("marca").value.trim();
-      const modelo = document.getElementById("modelo").value.trim();
-      const ram = document.getElementById("ram").value.trim();
-      const memoria = document.getElementById("memoria").value.trim();
-      const detalles = document.getElementById("detalles").value.trim();
+      const marca = document.getElementById("marca").value.trim().toUpperCase();
+      const modelo = document.getElementById("modelo").value.trim().toUpperCase();
+      const ram = document.getElementById("ram").value.trim().toUpperCase();
+      const memoria = document.getElementById("memoria").value.trim().toUpperCase();
+      const detalles = document.getElementById("detalles").value.trim().toUpperCase();
       const precioCompraRaw = document.getElementById("precioCompra").value;
       const precioVentaRaw = document.getElementById("precioVenta").value;
       const precioCompra = precioCompraRaw === "" ? null : Number(precioCompraRaw);
@@ -662,7 +672,7 @@
       document.getElementById("editId").value = item.id;
       document.getElementById("formTitle").textContent = "Editar modelo";
       document.getElementById("tipo").value = item.tipo;
-      document.getElementById("marca").value = item.marca || "";
+      document.getElementById("marca").value = (item.marca || "").toUpperCase();
       document.getElementById("modelo").value = item.modelo;
       document.getElementById("ram").value = item.ram || "";
       document.getElementById("memoria").value = item.memoria || "";
@@ -845,11 +855,11 @@
           items = importedItems.map(item => ({
             id: item.id || crypto.randomUUID(),
             tipo: item.tipo === "pc" ? "pc" : item.tipo === "tablet" ? "tablet" : "smartphone",
-            marca: String(item.marca || "").trim(),
-            modelo: String(item.modelo || "").trim(),
-            ram: String(item.ram || "").trim(),
-            memoria: String(item.memoria || "").trim(),
-            detalles: String(item.detalles || "").trim(),
+            marca: String(item.marca || "").trim().toUpperCase(),
+            modelo: String(item.modelo || "").trim().toUpperCase(),
+            ram: String(item.ram || "").trim().toUpperCase(),
+            memoria: String(item.memoria || "").trim().toUpperCase(),
+            detalles: String(item.detalles || "").trim().toUpperCase(),
             precioCompra: item.tipo === "smartphone" && item.precioCompra !== null && item.precioCompra !== undefined && item.precioCompra !== "" ? Number(item.precioCompra) : null,
             precioVenta: item.precioVenta !== null && item.precioVenta !== undefined && item.precioVenta !== "" ? Number(item.precioVenta) : null,
             updatedAt: item.updatedAt || new Date().toISOString()
